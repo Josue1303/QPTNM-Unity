@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 2898598110018658850}
   m_Layer: 0
   m_Name: ANTPRO 1
-  m_TagString: Untagged
+  m_TagString: ant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
