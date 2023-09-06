@@ -3,6 +3,8 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
 
 
 public class ConnectApi : MonoBehaviour
@@ -16,7 +18,9 @@ public class ConnectApi : MonoBehaviour
     public GameObject[] agentesCaja;
 
     public int numAgents = 2;
+    public  TMP_Text cajasActualesText;
 
+    public TMP_Text cantidadAgentes;
 
     private Vector3[] posicionInicial;
 
@@ -159,6 +163,10 @@ public class ConnectApi : MonoBehaviour
 
     IEnumerator GetAgentData(string baseURL)
     {
+
+        BarGraph barGraph = GameObject.Find("grafica").GetComponent<BarGraph>();
+
+
         string url = baseURL + "/agent_data";
         UnityWebRequest request = UnityWebRequest.Get(url);
 
@@ -168,6 +176,18 @@ public class ConnectApi : MonoBehaviour
         {
             // Aquí encapsulamos la lista en una clase contenedora. //CAMBIAR ESTO 
             AgentList receivedData = JsonUtility.FromJson<AgentList>("{\"agentList\":" + request.downloadHandler.text + "}");
+
+            if (cantidadAgentes == null) {
+                Debug.LogError("cajasActualesText no ha sido asignado");
+            }
+            if (receivedData == null) {
+                Debug.LogError("receivedData es null");
+            } else if (receivedData.agentList == null) {
+                Debug.LogError("agentListCaja es null");
+            } else {
+                cantidadAgentes.text = "Cantidad de agentes: " + receivedData.agentList.Count.ToString();
+            }
+
             // 
             int cont = 0;
             float tiempoDeAnimacion = timeStep - 0.2f;
@@ -185,9 +205,15 @@ public class ConnectApi : MonoBehaviour
                 nuevaPosicion[cont] = new Vector3(x, 0f, y);
                 posicionInicial[cont] = agentes[cont].transform.position;
 
+                if(agent.enCarga)
+                {
+                    barGraph.paquetesAgenteMover++; 
+                }
+
+
                 cont++;
             }
-
+            
             while (tiempoPasado < tiempoDeAnimacion)
             {
 
@@ -205,6 +231,7 @@ public class ConnectApi : MonoBehaviour
                     {
                         // Desactiva el GameObject hijo
                         hijoADesactivar.SetActive(true);
+                        
                     }
                     else
                     {
@@ -236,9 +263,26 @@ public class ConnectApi : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
+
+            
+
             // Aquí encapsulamos la lista en una clase contenedora. //CAMBIAR ESTO 
             AgentListCaja receivedData = JsonUtility.FromJson<AgentListCaja>("{\"agentListCaja\":" + request.downloadHandler.text + "}");
             // 
+
+            if (cajasActualesText == null) {
+                Debug.LogError("cajasActualesText no ha sido asignado");
+            }
+
+            if (receivedData == null) {
+                Debug.LogError("receivedData es null");
+            } else if (receivedData.agentListCaja == null) {
+                Debug.LogError("agentListCaja es null");
+            } else {
+                cajasActualesText.text = "Cajas Actuales: " + receivedData.agentListCaja.Count.ToString();
+            }
+
+
             int cont = 0;
             float tiempoDeAnimacion = timeStep - 0.2f;
             float tiempoPasado = 0f;
@@ -251,6 +295,7 @@ public class ConnectApi : MonoBehaviour
                 nuevaPosicionCaja[cont] = new Vector3(x, 0.4f, y);
                 posicionInicialCaja[cont] = agentesCaja[cont].transform.position;
 
+        
                 cont++;
             }
 
@@ -293,6 +338,9 @@ public class ConnectApi : MonoBehaviour
 
 IEnumerator GetAgentRecoger(string baseURL)
     {
+
+        BarGraph barGraph = GameObject.Find("grafica").GetComponent<BarGraph>();
+
         string url = baseURL + "/agent_recoger";
         UnityWebRequest request = UnityWebRequest.Get(url);
 
@@ -318,6 +366,12 @@ IEnumerator GetAgentRecoger(string baseURL)
                 // aquí ando pero voy a comer -LG
                 nuevaPosicionRecoger[cont] = new Vector3(x, 0f, y);
                 posicionInicialRecoger[cont] = agentesRecoger[cont].transform.position;
+
+                if(agent.enCarga)
+                {
+                    barGraph.paquetesAgenteRecoger++; 
+                }
+
 
                 cont++;
             }
