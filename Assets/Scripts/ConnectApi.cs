@@ -42,6 +42,7 @@ public class ConnectApi : MonoBehaviour
     private bool[] enCarga;
     private bool[] enCargaRecoger;
 
+    public bool[] sucia;
 
     private List<int> agentesContados = new List<int>();
     private List<int> agentesContadosRecoger = new List<int>();
@@ -72,6 +73,8 @@ public class ConnectApi : MonoBehaviour
         public int[] pos;
         public string type;
 
+        public bool sucia;
+
 
     }
 
@@ -90,12 +93,12 @@ public class ConnectApi : MonoBehaviour
 
     private string baseURL = "http://127.0.0.1:5000";
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    // // Start is called before the first frame update
+    // void Start()
+    // {
 
 
-    }
+    // }
 
     public void ConvertInputFieldsToIntegers()
     {
@@ -134,6 +137,7 @@ public class ConnectApi : MonoBehaviour
         enCargaRecoger = new bool[numAgentsRecoger2];
         posicionInicialCaja = new Vector3[200];
         nuevaPosicionCaja = new Vector3[200];
+        sucia = new bool[200];
         for (int i = 0; i < numAgents2; i++)
         {
             agentes[i] = Instantiate(robots, transform.position, transform.rotation);
@@ -229,9 +233,6 @@ public class ConnectApi : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-
-
-
             // Aquí encapsulamos la lista en una clase contenedora. //CAMBIAR ESTO 
             AgentListCaja receivedData = JsonUtility.FromJson<AgentListCaja>("{\"agentListCaja\":" + request.downloadHandler.text + "}");
             // 
@@ -267,7 +268,7 @@ public class ConnectApi : MonoBehaviour
                 int id = agent.id;
                 nuevaPosicionCaja[cont] = new Vector3(x, 0.4f, y);
                 posicionInicialCaja[cont] = agentesCaja[cont].transform.position;
-
+                sucia[cont] = agent.sucia;
 
                 cont++;
             }
@@ -281,7 +282,7 @@ public class ConnectApi : MonoBehaviour
 
                 // Interpola suavemente la posición y la rotación
 
-
+                
 
                 for (int i = 0; i < cont; i++)
                 {
@@ -290,17 +291,15 @@ public class ConnectApi : MonoBehaviour
                     if (!nuevaPosicionCaja[i].Equals(new Vector3(23f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(23f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 5f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 5f))
                     && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 8f))
                     && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 18f))
-                    && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(3f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(3f, 0.4f, 14f)))
+                    && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(3f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(3f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(24f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(25f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(26f, 0.4f, 9f))&& !nuevaPosicionCaja[i].Equals(new Vector3(27f, 0.4f, 9f))&& !nuevaPosicionCaja[i].Equals(new Vector3(28f, 0.4f, 9f))&& !nuevaPosicionCaja[i].Equals(new Vector3(29f, 0.4f, 9f))
+                    && !nuevaPosicionCaja[i].Equals(new Vector3(24f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(25f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(26f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(0f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(1f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(2f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(0f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(1f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(2f, 0.4f, 14f)))
                     {
                         agentesCaja[i].SetActive(false);
                     }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                     else
                     {
                         agentesCaja[i].SetActive(true);
                     }
-
-
                 }
 
 
