@@ -22,9 +22,14 @@ public class ConnectApi : MonoBehaviour
 
     public TMP_InputField numAgentsRecoger;
 
+    public GameObject MostrarGrafica;
+    private bool MostrarGraficaBool=false;
     public TMP_Text cajasActualesText;
 
     public TMP_Text cantidadAgentes;
+
+    public TMP_Text Steps;
+    private int stepsfinal = 0;
 
     public TMP_Text agenteRecogerText;
     public Button buttonToDisable;
@@ -42,11 +47,17 @@ public class ConnectApi : MonoBehaviour
     private bool[] enCarga;
     private bool[] enCargaRecoger;
 
-    public bool[] sucia;
+    private bool validadorpos = false;
 
+    public bool[] sucia;
+    public int bateriaConsumida = 0;
+    private int steps15 = 0;
     private List<int> agentesContados = new List<int>();
     private List<int> agentesContadosRecoger = new List<int>();
 
+    private int[] paquetesEntregadosCont;
+
+    private int paquetesEntregadosFinal;
 
     public int numAgents2;
 
@@ -64,6 +75,18 @@ public class ConnectApi : MonoBehaviour
         public int[] pos;
         public string type;
         public bool enCarga;
+
+    }
+
+    [System.Serializable]
+    public class AgentDataRecoger
+    {
+        public int id;
+        public int[] pos;
+        public string type;
+        public bool enCarga;
+        public int paquetesDespachados;
+        
     }
 
     [System.Serializable]
@@ -72,10 +95,7 @@ public class ConnectApi : MonoBehaviour
         public int id;
         public int[] pos;
         public string type;
-
         public bool sucia;
-
-
     }
 
 
@@ -86,10 +106,18 @@ public class ConnectApi : MonoBehaviour
     }
 
     [System.Serializable]
+    public class AgentListRecoger
+    {
+        public List<AgentDataRecoger> agentListRecoger;
+    }
+
+    [System.Serializable]
     public class AgentListCaja
     {
         public List<AgentDataCaja> agentListCaja;
     }
+
+    
 
     private string baseURL = "http://127.0.0.1:5000";
 
@@ -132,6 +160,7 @@ public class ConnectApi : MonoBehaviour
         nuevaPosicion = new Vector3[numAgents2];
         posicionInicialRecoger = new Vector3[numAgentsRecoger2];
         nuevaPosicionRecoger = new Vector3[numAgentsRecoger2];
+        paquetesEntregadosCont = new int[numAgentsRecoger2];
         agentesCaja = new GameObject[200];
         enCarga = new bool[numAgents2];
         enCargaRecoger = new bool[numAgentsRecoger2];
@@ -175,14 +204,39 @@ public class ConnectApi : MonoBehaviour
         {
             InitializeModel(32, 24, numAgents2, ratePackages2, numAgentsRecoger2);
         }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if(MostrarGraficaBool){
+                MostrarGrafica.SetActive(false);    
+            }
+
+            else{
+                MostrarGrafica.SetActive(true);
+            }
+            
+
+        }
     }
 
 
     IEnumerator Todo()
     {
+        BarGraph barGraph = GameObject.Find("grafica").GetComponent<BarGraph>();
         while (true)
         {
             yield return new WaitForSeconds(timeStep); // Espera 1 segundo
+            stepsfinal += 1;
+            
+            steps15 += 1;
+            if (steps15 == 15){
+                steps15 = 0;
+            }
+            
+            Steps.text= ("Steps: " + stepsfinal); //
+            barGraph.steps[steps15] = stepsfinal;
+            barGraph.bateriaAgentes[steps15]=barGraph.bateriaAgentes2;
+            barGraph.paquetesEntregados[steps15] = paquetesEntregadosFinal; //
             StartCoroutine(GetAgentRecoger(baseURL));
             StartCoroutine(GetAgentData(baseURL));
             StartCoroutine(Step(baseURL));
@@ -267,6 +321,7 @@ public class ConnectApi : MonoBehaviour
                 int y = agent.pos[1];               //LOGIC EQUIVOCADA
                 int id = agent.id;
                 nuevaPosicionCaja[cont] = new Vector3(x, 0.4f, y);
+                
                 posicionInicialCaja[cont] = agentesCaja[cont].transform.position;
                 sucia[cont] = agent.sucia;
 
@@ -292,13 +347,14 @@ public class ConnectApi : MonoBehaviour
                     && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 8f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 8f))
                     && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 15f)) && !nuevaPosicionCaja[i].Equals(new Vector3(18f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(17f, 0.4f, 18f))
                     && !nuevaPosicionCaja[i].Equals(new Vector3(16f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(15f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(14f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(13f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(12f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(11f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(10f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(9f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(8f, 0.4f, 18f)) && !nuevaPosicionCaja[i].Equals(new Vector3(3f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(3f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(24f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(25f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(26f, 0.4f, 9f))&& !nuevaPosicionCaja[i].Equals(new Vector3(27f, 0.4f, 9f))&& !nuevaPosicionCaja[i].Equals(new Vector3(28f, 0.4f, 9f))&& !nuevaPosicionCaja[i].Equals(new Vector3(29f, 0.4f, 9f))
-                    && !nuevaPosicionCaja[i].Equals(new Vector3(24f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(25f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(26f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(0f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(1f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(2f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(0f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(1f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(2f, 0.4f, 14f)))
+                    && !nuevaPosicionCaja[i].Equals(new Vector3(24f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(25f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(26f, 0.4f, 14f))&& !nuevaPosicionCaja[i].Equals(new Vector3(27f, 0.4f, 14f))&& !nuevaPosicionCaja[i].Equals(new Vector3(28f, 0.4f, 14f))&& !nuevaPosicionCaja[i].Equals(new Vector3(29f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(0f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(1f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(2f, 0.4f, 9f)) && !nuevaPosicionCaja[i].Equals(new Vector3(0f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(1f, 0.4f, 14f)) && !nuevaPosicionCaja[i].Equals(new Vector3(2f, 0.4f, 14f)))
                     {
                         agentesCaja[i].SetActive(false);
                     }
                     else
                     {
                         agentesCaja[i].SetActive(true);
+                        
                     }
                 }
 
@@ -355,17 +411,12 @@ public class ConnectApi : MonoBehaviour
                 int y = agent.pos[1];               //LOGIC EQUIVOCADA
                 int id = agent.id;
                 enCarga[cont] = agent.enCarga;
+                barGraph.bateriaAgentes2++;
                 //Debug.Log("ID: " + id + ", X: " + x + ", Y: " + y + ", enCarga: " + enCarga[cont]);
 
                 // aquí ando pero voy a comer -LG
                 nuevaPosicion[cont] = new Vector3(x, 0f, y);
                 posicionInicial[cont] = agentes[cont].transform.position;
-
-                if (agent.enCarga && !agentesContadosRecoger.Contains(id))
-                {
-                    agentesContadosRecoger.Add(id);
-                    barGraph.paquetesAgenteMover++;
-                }
 
 
                 cont++;
@@ -426,7 +477,7 @@ public class ConnectApi : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             // Aquí encapsulamos la lista en una clase contenedora. //CAMBIAR ESTO 
-            AgentList receivedData = JsonUtility.FromJson<AgentList>("{\"agentList\":" + request.downloadHandler.text + "}");
+            AgentListRecoger receivedData = JsonUtility.FromJson<AgentListRecoger>("{\"agentListRecoger\":" + request.downloadHandler.text + "}");
             // 
 
             if (agenteRecogerText == null)
@@ -438,39 +489,33 @@ public class ConnectApi : MonoBehaviour
             {
                 Debug.LogError("receivedData es null");
             }
-            else if (receivedData.agentList == null)
+            else if (receivedData.agentListRecoger == null)
             {
                 Debug.LogError("agentListCaja es null");
             }
             else
             {
-                agenteRecogerText.text = "Agentes Recoger: " + receivedData.agentList.Count.ToString();
+                agenteRecogerText.text = "Agentes Recoger: " + receivedData.agentListRecoger.Count.ToString();
             }
 
             int cont = 0;
             float tiempoDeAnimacion = timeStep - 0.2f;
             float tiempoPasado = 0f;
 
-            foreach (AgentData agent in receivedData.agentList)
+            foreach (AgentDataRecoger agent in receivedData.agentListRecoger)
             {
                 int x = agent.pos[0];
                 int y = agent.pos[1];               //LOGIC EQUIVOCADA
-                int id = agent.id;
+                int id = agent.id; //
                 enCargaRecoger[cont] = agent.enCarga;
+                barGraph.bateriaAgentes2++;
+                paquetesEntregadosCont[cont] = agent.paquetesDespachados;
+                
                 //Debug.Log("AGENTE RECOGER AAAA ID: " + id + ", X: " + x + ", Y: " + y + ", enCarga: " + enCargaRecoger[cont]);
 
                 // aquí ando pero voy a comer -LG
                 nuevaPosicionRecoger[cont] = new Vector3(x, 0f, y);
                 posicionInicialRecoger[cont] = agentesRecoger[cont].transform.position;
-
-                if (agent.enCarga && !agentesContados.Contains(id))
-                {
-
-                    agentesContados.Add(id);
-
-                    barGraph.paquetesAgenteRecoger++;
-                }
-
 
                 cont++;
             }
@@ -483,8 +528,10 @@ public class ConnectApi : MonoBehaviour
 
                 // Interpola suavemente la posición y la rotación
 
+                paquetesEntregadosFinal = 0;
                 for (int i = 0; i < numAgentsRecoger2; i++)
                 {
+                    paquetesEntregadosFinal += paquetesEntregadosCont[i];
                     agentesRecoger[i].transform.position = Vector3.Lerp(posicionInicialRecoger[i], nuevaPosicionRecoger[i], t);
                     agentesRecoger[i].transform.rotation = Quaternion.Lerp(agentesRecoger[i].transform.rotation, Quaternion.identity, t);
                     GameObject hijoADesactivar = agentesRecoger[i].transform.GetChild(1).gameObject;
