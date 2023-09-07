@@ -47,8 +47,6 @@ public class ConnectApi : MonoBehaviour
     private bool[] enCarga;
     private bool[] enCargaRecoger;
 
-    private bool validadorpos = false;
-
     public bool[] sucia;
     public int bateriaConsumida = 0;
     private int steps15 = 0;

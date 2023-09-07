@@ -54,7 +54,6 @@ public class BarGraph : MonoBehaviour
         if(bateriaAgentes[i] / divisor > reduxGraph){
             scaleFactor = 1+reduxGraph;
             reduxGraph += 1;
-            divisor = divisor;
         }
         int bateriaHeight = Mathf.Min(bateriaAgentes[i] / scaleFactor, maxBarHeight);
         GUI.Box(new Rect(100+(i*25), 60, 20, bateriaHeight), "");    
@@ -65,7 +64,6 @@ public class BarGraph : MonoBehaviour
         if(paquetesEntregados[i] / divisor2 > reduxGraph2){
             scaleFactor2 = 1+reduxGraph2;
             reduxGraph2 += 1;
-            divisor2 = divisor2;
         }
         int paquetesHeight = Mathf.Min(paquetesEntregados[i] / scaleFactor2, maxBarHeight);
         GUI.Box(new Rect(100+400+(i*25), 60, 20, paquetesHeight), "");    
